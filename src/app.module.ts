@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './users/entities/user.entity';
 import { AuthModule } from './auth/auth.module';
 import { ListsModule } from './lists/lists.module';
+import { List } from './lists/entities/list.entity';
 
 @Module({
   imports: [UsersModule,
@@ -16,7 +17,7 @@ import { ListsModule } from './lists/lists.module';
       username: 'postgres', 
       password: '123456',  
       database: 'mailing_platform',  
-      entities: [User], 
+      entities: [User, List], 
       synchronize: true, 
     }),
     AuthModule,
