@@ -1,10 +1,10 @@
-import { Column, DeleteDateColumn, Entity, PrimaryGeneratedColumn } from "typeorm";
-@Entity()
+import { Column, CreateDateColumn, DeleteDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+@Entity('users')
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column()
+    @Column({ unique: true })
     username: string;
 
     @Column({ unique: true, nullable: false })
@@ -13,6 +13,9 @@ export class User {
     @Column({ nullable: false })
     password: string;
 
-    @DeleteDateColumn()
-    deletedAt: Date;
+    @CreateDateColumn({ type: 'timestamp'})
+    created_at: Date;
+
+    @UpdateDateColumn({ type: 'timestamp'})
+    updated_at: Date;
 }
