@@ -4,18 +4,33 @@ import { UpdateListDto } from './dto/update-list.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { List } from './entities/list.entity';
 import { Repository } from 'typeorm';
+import { User } from 'src/users/entities/user.entity';
 
 @Injectable()
 export class ListsService {
   constructor(
     @InjectRepository(List)
     private listsRepository: Repository<List>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   // Crear una nueva lista
   async create(createListDto: CreateListDto): Promise<List> {
-    const list = this.listsRepository.create(createListDto);
-    return await this.listsRepository.save(list);
+    const user = await this.userRepository.findOne({
+      where: { id: createListDto.user_id },  // Pasamos un objeto con la opción 'where'
+    });
+
+    if (!user) {
+      throw new Error('User not found');  // Manejo de error si el usuario no existe
+    }
+
+    const list = this.listsRepository.create({
+      ...createListDto,
+      user: user,  // Asociamos el usuario encontrado con la lista
+    });
+
+    return this.listsRepository.save(list);  // Guardamos la lista
   }
 
    // Método para obtener todas las listas

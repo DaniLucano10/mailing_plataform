@@ -1,3 +1,3 @@
-export const jtwConstants = {
-    secret: process.env.JWT_SECRET || 'default-secret-key'
+export const jwtConstants = {
+    secret: 'clave secreta'
 };

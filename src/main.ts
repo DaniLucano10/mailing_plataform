@@ -2,8 +2,6 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import * as dotenv from 'dotenv';
-dotenv.config(); 
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -22,7 +20,14 @@ async function bootstrap() {
     .setTitle('API Docs')
     .setDescription('The cats API description')
     .setVersion('1.0')
-    .addBearerAuth()
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT', // Agregar formato JWT para que Swagger reconozca bien el token
+      },
+      'JWT-auth', // Nombre de la autorización, debe coincidir con @ApiBearerAuth()
+    )
     .build();
 
   const documentFactory = () => SwaggerModule.createDocument(app, config);

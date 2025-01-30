@@ -1,14 +1,9 @@
-import {
-  ConflictException,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from 'src/users/users.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import * as bcrypt from 'bcrypt';
-import { jtwConstants } from './constants/jwt.constant';
+import * as bcrypt from 'bcryptjs';  // Cambiado de bcrypt a bcryptjs
 
 @Injectable()
 export class AuthService {
@@ -30,6 +25,7 @@ export class AuthService {
     // Hashear la contraseña
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
+    console.log('Contraseña hasheada durante el registro:', hashedPassword); // Depuración
 
     // Crear el usuario
     const user = await this.usersService.create({
@@ -37,7 +33,7 @@ export class AuthService {
       email,
       password: hashedPassword,
     });
-
+    console.log('Hash generado:', hashedPassword);
     // Generar el token JWT
     const payload = { id: user.id, username: user.username, email: user.email };
     return {
@@ -45,28 +41,24 @@ export class AuthService {
     };
   }
 
-  // Login de usuario
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
-
-    // Buscar el usuario por email
     const user = await this.usersService.findByEmail(email);
     if (!user) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      throw new UnauthorizedException('Usuario no encontrado');
     }
 
-    // Comparar la contraseña proporcionada con el hash almacenado
     const isMatch = await bcrypt.compare(password, user.password);
-
-    // Verificar el resultado de la comparación
     if (!isMatch) {
-      throw new UnauthorizedException('Credenciales incorrectas');
+      throw new UnauthorizedException('Contraseña incorrecta');
     }
 
-    // Generar el token JWT
     const payload = { id: user.id, username: user.username, email: user.email };
-    return {
-      token: this.jwtService.sign(payload, { secret: jtwConstants.secret }),
-    };
-  }
+    const token = this.jwtService.sign(payload); 
+    
+    console.log('🔑 Token generado:', token); // 🛠️ Depuración
+
+    return { token };
+}
+
 }
