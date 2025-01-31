@@ -1,5 +1,13 @@
-import { User } from "src/users/entities/user.entity";
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { User } from 'src/users/entities/user.entity';
+import {
+  Column,
+  CreateDateColumn,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
 
 @Entity('subscribers')
 export class Subscriber {
@@ -9,21 +17,14 @@ export class Subscriber {
   @Column({ unique: true })
   email: string;
 
-  @Column()
-  first_name: string;
+  @Column({ nullable: true })
+  name: string; // Esto puede ser nulo si no se envía
 
-  @Column()
-  last_name: string;
+  @Column({ nullable: true, default: 'active' })
+  status: string; // Puede ser nulo, con valor por defecto "active"
 
-  @Column({
-    type: 'enum',
-    enum: ['active', 'inactive', 'pending', 'banned'],
-    default: 'active',
-  })
-  status: string;
-
-  @Column({nullable: true})
-  user_id: number | null; 
+  @Column({ nullable: true })
+  user_id: number | null;
 
   @ManyToOne(() => User, (user) => user.subscribers, { nullable: true })
   @JoinColumn({ name: 'user_id' })
