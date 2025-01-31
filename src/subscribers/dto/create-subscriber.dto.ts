@@ -1,19 +1,17 @@
-import { IsEmail, IsIn, IsInt, IsOptional, IsString } from "class-validator";
+import { IsInt, IsOptional, IsString } from "class-validator";
 
 export class CreateSubscriberDto {
-    @IsEmail()
+    @IsString()
     email: string;
   
     @IsString()
-    first_name: string;
+    @IsOptional() 
+    name?: string;
   
+    @IsOptional() 
     @IsString()
-    last_name: string;
-  
-    @IsOptional()
-    @IsIn(['active', 'inactive', 'pending', 'banned'])
     status?: string;
-
+  
     @IsInt()
-    user_id?: number;
+    user_id: number;;
 }
