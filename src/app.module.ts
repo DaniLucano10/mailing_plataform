@@ -23,7 +23,7 @@ import { Subscriber } from './subscribers/entities/subscriber.entity';
       password: '123456',
       database: 'mailing_platform',
       entities: [User, List, Subscriber],
-      synchronize: false,
+      synchronize: true,
     }),
     AuthModule,
     ListsModule,
