@@ -62,4 +62,12 @@ export class AuthService {
     const token = this.jwtService.sign(payload);
     return { token };
   }
+
+  logout() {
+    // Este método no es necesario si solo estás manejando el token en el cliente.
+    // Pero si quieres hacerlo más robusto, puedes implementar una lista negra de tokens.
+
+    // Si decides tener un sistema de lista negra de tokens, aquí iría la lógica para invalidar el token en el servidor.
+    return { message: 'Cierre de sesión exitoso' };
+  }
 }
