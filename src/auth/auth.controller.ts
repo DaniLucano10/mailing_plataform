@@ -24,12 +24,7 @@ export class AuthController {
 
   // Cierre de sesión@Post('logout')
   @Post('logout')
-  async logout(@Body() logoutDto: LogoutDto) {
-    // Lógica de cierre de sesión (puede ser invalidar el token o eliminarlo del frontend)
-    // El correo y el token que se envían por la solicitud pueden ser usados para invalidar el token en la base de datos si se implementa
-    console.log(logoutDto.email);  // Verificar que se recibe correctamente
-    console.log(logoutDto.access_token);  // Verificar que se recibe correctamente
-
-    return { message: 'Sesión cerrada correctamente' };
+  logout() {
+    return this.authService.logout(); // Llamada al método de logout
   }
 }
