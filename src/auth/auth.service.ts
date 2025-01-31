@@ -1,9 +1,10 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { UsersService } from 'src/users/users.service';
+import { Injectable } from '@nestjs/common';
+import { UsersService } from 'src/users/users.service'; // Asegúrate de que importas el servicio de Users
 import { RegisterDto } from './dto/register.dto';
+import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
-import * as bcrypt from 'bcryptjs';  // Cambiado de bcrypt a bcryptjs
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  // Registro de usuario
+  // Método para registrar un usuario
   async register(registerDto: RegisterDto) {
     const { username, email, password } = registerDto;
 
@@ -22,43 +23,43 @@ export class AuthService {
       throw new ConflictException('El correo ya está registrado');
     }
 
-    // Hashear la contraseña
+    // Hashear la contraseña antes de guardar el usuario
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
-    console.log('Contraseña hasheada durante el registro:', hashedPassword); // Depuración
 
     // Crear el usuario
     const user = await this.usersService.create({
       username,
       email,
-      password: hashedPassword,
+      password: hashedPassword, // Guardamos la contraseña hasheada
     });
-    console.log('Hash generado:', hashedPassword);
-    // Generar el token JWT
+
+    // Generamos el payload para el JWT
     const payload = { id: user.id, username: user.username, email: user.email };
-    return {
-      token: this.jwtService.sign(payload),
-    };
+    
+    // Firmamos el JWT
+    const token = this.jwtService.sign(payload);
+    
+    return { token }; // Retornamos el token generado
   }
 
+  // Método para login
   async login(loginDto: LoginDto) {
     const { email, password } = loginDto;
+
     const user = await this.usersService.findByEmail(email);
     if (!user) {
       throw new UnauthorizedException('Usuario no encontrado');
     }
 
+    // Verificar la contraseña
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       throw new UnauthorizedException('Contraseña incorrecta');
     }
 
     const payload = { id: user.id, username: user.username, email: user.email };
-    const token = this.jwtService.sign(payload); 
-    
-    console.log('🔑 Token generado:', token); // 🛠️ Depuración
-
+    const token = this.jwtService.sign(payload);
     return { token };
-}
-
+  }
 }
