@@ -11,19 +11,25 @@ import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './auth/guard/auth.guard';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { Subscriber } from './subscribers/entities/subscriber.entity';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
   imports: [
     UsersModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: '123456',
-      database: 'aweber_db',
+      host: process.env.POSTGRES_HOST,
+      port: parseInt(process.env.POSTGRES_PORT ?? '3000'),
+      username: process.env.POSTGRES_USERNAME,
+      password: process.env.POSTGRES_PASSWORD,
+      database: process.env.POSTGRES_DATABASE,
       entities: [User, List, Subscriber],
-      synchronize: false,
+      autoLoadEntities: true,
+      synchronize: true,
     }),
     AuthModule,
     ListsModule,
