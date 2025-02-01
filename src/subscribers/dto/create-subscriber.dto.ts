@@ -1,17 +1,22 @@
-import { IsInt, IsOptional, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsEmail, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateSubscriberDto {
-    @IsString()
+    @IsEmail()
+    @IsNotEmpty()
     email: string;
   
     @IsString()
-    @IsOptional() 
+    @IsNotEmpty()
     name?: string;
   
     @IsOptional() 
     @IsString()
     status?: string;
   
-    @IsInt()
-    user_id: number;;
+    
+    @IsOptional()
+    @IsInt() // Validar que sea un número entero
+    @Transform(({ value }) => parseInt(value) || 0)
+    user_id?: number;
 }

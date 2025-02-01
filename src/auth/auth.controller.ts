@@ -12,19 +12,28 @@ import { CreateUserDto } from 'src/users/dto/create-user.dto';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
-  @Post('register')
-  async register(@Body() registerDto: RegisterDto) {
-    return this.authService.register(registerDto);  // Llamamos al servicio de registro
-  }
-
   @Post('login')
   async login(@Body() loginDto: LoginDto) {
-    return this.authService.login(loginDto);
+    try {
+      const result = await this.authService.login(loginDto);
+      return result; // Retorna el token JWT
+    } catch (error) {
+      throw new UnauthorizedException(error.message);
+    }
   }
 
-  // Cierre de sesión@Post('logout')
+  @Post('register')
+  async register(@Body() registerDto: any) {
+    try {
+      const result = await this.authService.register(registerDto);
+      return result; // Retorna el token JWT
+    } catch (error) {
+      throw error; // Propaga el error (ConflictException o cualquier otro)
+    }
+  }
+
   @Post('logout')
   logout() {
-    return this.authService.logout(); // Llamada al método de logout
+    return this.authService.logout();
   }
 }

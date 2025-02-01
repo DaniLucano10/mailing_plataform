@@ -21,10 +21,10 @@ export class Subscriber {
   name: string; // Esto puede ser nulo si no se envía
 
   @Column({ nullable: true, default: 'active' })
-  status: string; // Puede ser nulo, con valor por defecto "active"
+  status?: string; // Puede ser nulo, con valor por defecto "active"
 
   @Column({ nullable: true })
-  user_id: number | null;
+  user_id?: number | null;
 
   @ManyToOne(() => User, (user) => user.subscribers, { nullable: true })
   @JoinColumn({ name: 'user_id' })
