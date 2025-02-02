@@ -9,6 +9,8 @@ import {
   Query,
   BadRequestException,
   UseGuards,
+  Put,
+  NotFoundException,
 } from '@nestjs/common';
 import { SubscribersService } from './subscribers.service';
 import { CreateSubscriberDto } from './dto/create-subscriber.dto';
@@ -47,21 +49,31 @@ export class SubscribersController {
     return this.subscriberSService.create(createSubscriberDto);
   }
 
+ 
   @Get()
-  findAll() {
+  async findAll(): Promise<Subscriber[] | string> {
     return this.subscriberSService.findAll();
   }
 
-  @Patch(':id')
-  update(
-    @Param('id') id: number,
-    @Body() updateSubscriberDto: UpdateSubscriberDto,
-  ) {
+  @Get(':id')
+  async findOne(@Param('id') id: number): Promise<Subscriber> {
+    const subscriber = await this.subscriberSService.findOne(id);
+  
+    // Si no se encuentra el suscriptor, lanzar una excepción
+    if (!subscriber) {
+      throw new NotFoundException(`El suscriptor con ID ${id} no existe`);
+    }
+  
+    return subscriber;
+  }
+
+  @Put(':id')
+  async update(@Param('id') id: number, @Body() updateSubscriberDto: UpdateSubscriberDto): Promise<Subscriber> {
     return this.subscriberSService.update(id, updateSubscriberDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
+  async remove(@Param('id') id: number): Promise<void> {
     return this.subscriberSService.remove(id);
   }
 }
