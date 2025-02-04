@@ -37,10 +37,10 @@ export class AuthService {
 
     // Generamos el payload para el JWT
     const payload = { id: user.id, username: user.username, email: user.email };
-    
+
     // Firmamos el JWT
-    const token = this.jwtService.sign(payload);
-    
+    const token = this.jwtService.sign(payload, { expiresIn: '1d' });
+
     return { token }; // Retornamos el token generado
   }
 
@@ -60,7 +60,10 @@ export class AuthService {
     }
 
     const payload = { id: user.id, username: user.username, email: user.email };
-    const token = this.jwtService.sign(payload, { secret: jwtConstants.secret});
+    const token = this.jwtService.sign(payload, {
+      secret: jwtConstants.secret,
+      expiresIn: '5m',
+    });
     return { token };
   }
 

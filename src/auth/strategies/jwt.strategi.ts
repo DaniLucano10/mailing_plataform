@@ -10,12 +10,11 @@ import { jwtConstants } from '../constants/jwt.constant';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    // @InjectRepository(ActiveToken)
-    // private readonly activeTokenRepository: Repository<ActiveToken>,
-    // @InjectRepository(BlacklistedToken)
-    // private readonly blacklistTokenRepository: Repository<BlacklistedToken>,
-  ) {
+  constructor() // @InjectRepository(ActiveToken)
+  // private readonly activeTokenRepository: Repository<ActiveToken>,
+  // @InjectRepository(BlacklistedToken)
+  // private readonly blacklistTokenRepository: Repository<BlacklistedToken>,
+  {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -24,29 +23,11 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(req: Request, payload: any) {
-    const token = ExtractJwt.fromAuthHeaderAsBearerToken()(req);
-    // Validar si el token está en la lista negra
-    // const blacklistedToken = await this.blacklistTokenRepository.findOne({
-    //   where: { token },
-    // });
-
-    // if (blacklistedToken) {
-    //   throw new UnauthorizedException('Token revocado');
-    // }
-    // // Valida que el token está activo
-    // const activeToken = await this.activeTokenRepository.findOne({
-    //   where: { email: payload.email, token },
-    // });
-    // if (!activeToken) {
-    //   throw new UnauthorizedException('Token inválido');
-    // }
+  async validate(payload: any) {
     return {
-      sub: payload.sub,
+      userId: payload.id,
       username: payload.username,
       email: payload.email,
-      role: payload.role,
-      permission: payload.permission,
     };
   }
 }
